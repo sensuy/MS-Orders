@@ -9,4 +9,8 @@ export class OrdersService {
  createOrder(request: CreateOrderRequest) {
     return this.ordersRepository.create(request);
   }
+
+  getOrders() {
+    return this.ordersRepository.find({});
+  }
 }
