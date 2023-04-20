@@ -19,7 +19,7 @@ export class OrdersService {
       await session.commitTransaction();
       return order;
     }
-    catch (error) {
+    catch (error) { 
       await session.abortTransaction();
       throw error;
     }
