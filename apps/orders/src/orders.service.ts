@@ -11,15 +11,22 @@ export class OrdersService {
     private readonly ordersRepository: OrderRepository,
     @Inject(BILLING_SERVICE) private readonly billingClient: ClientProxy
   ) { }
-  async createOrder(request: CreateOrderRequest) {
+  async createOrder(request: CreateOrderRequest, authentication: string) {
     const session = await this.ordersRepository.startTransaction();
     try {
       const order = await this.ordersRepository.create(request, { session });
-      await lastValueFrom(this.billingClient.send('order_created', { request }), { defaultValue: null });
+      await lastValueFrom(this.billingClient.send('order_created', {
+        request,
+        Authentication: authentication
+      }),
+        {
+          defaultValue: null
+        }
+      );
       await session.commitTransaction();
       return order;
     }
-    catch (error) { 
+    catch (error) {
       await session.abortTransaction();
       throw error;
     }
